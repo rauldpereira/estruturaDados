@@ -4,6 +4,8 @@ using namespace std;
 
 void showTable()
 {
+    system("cls");
+
     char letra[16] = "ABCDEFGHIJKLMNO";
     cout << "  ";
     for (int i = 0; i < 15; i++)
@@ -23,15 +25,25 @@ void showTable()
         }
         cout << endl;
     }
+
+    cout << "Tecle <Enter> para fechar a tabela... ";
+    cin.ignore();
+    cin.get();
 }
 
-void matrizesVetores()
+
+
+void batalhaNaval()
 {
-    cout << "Matrizes/Vetores\n";
+    cout << "Batalha Naval\n";
     int op = 0;
+
+    int matriz_escolha_jogador[15][15];
 
     while (op != 4)
     {
+        system("cls");
+
         cout << "Qual modo deseja jogar? \n\
 1 - Player vs Player\n\
 2 - Player vs CPU \n\
@@ -39,11 +51,21 @@ void matrizesVetores()
 4 - Sair.\n";
         cin >> op;
 
+
     switch (op)
     {
         case 1:
             cout << "Player vs Player\n";
             showTable();
+            for(int i = 0; i <= 14; i++)
+            {
+                cout<<"\n";
+
+                for(int j = 0; j <= 14; j++)
+                {
+                    cout << matriz_escolha_jogador[i][j];
+                }
+            }
             break;
         case 2:
             cout << "Player vs CPU\n";
@@ -63,12 +85,57 @@ void matrizesVetores()
     }
 }
 
+void matrizesVetores()
+{
+
+    cout << "Matrizes e Vetores\n";
+    int op = 0;
+
+    while (op != 5)
+    {
+        system("cls");
+
+        cout << "Qual modo deseja jogar? \n\
+1 - Batalha Naval\n\
+2 - P2 \n\
+3 - P3\n\
+4 - P4 \n\
+5 - Sair.\n";
+        cin >> op;
+
+        switch (op)
+        {
+            case 1:
+                cout << "Batalha Naval\n";
+                batalhaNaval();
+                break;
+            case 2:
+                cout << "P2\n";
+                break;
+            case 3:
+                cout << "P3\n";
+                break;
+            case 4:
+                cout << "P4\n";
+                break;
+            case 5:
+                cout << "Saindo...\n";
+                break;
+            default:
+                cout << "Opção Inválida.\n";
+                break;
+        }
+    }
+}
+
 int main(void)
 {
     int op = 0;
 
     while (op != 5)
     {
+        system("cls");
+
         cout << "Escolha uma opção: \n\
 1 - P1 - Matrizes/vetores\n\
 2 - P2 \n\
