@@ -1,47 +1,122 @@
 #include <iostream>
+#include <stdio.h>
+#include <locale.h>
+#include <cctype>
 
 using namespace std;
 
-void showTable()
-{
+const int TAMANHO_TABULEIRO = 15;
+const int NUM_SUBMARINOS = 4;
+
+void mostrarTabela(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], string player) {
     system("cls");
 
     char letra[16] = "ABCDEFGHIJKLMNO";
+    cout << "Tabuleiro do " << player << ":\n";
     cout << "  ";
-    for (int i = 0; i < 15; i++)
-    {
+    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
         if (i < 9)
-            cout << "0"<< i + 1 << " ";
+            cout << "0" << i + 1 << " ";
         else
             cout << i + 1 << ' ';
-
     }
     cout << endl;
-    for (int j = 0; j < 15; j++)
-    {
+    for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
         cout << letra[j] << ' ';
-        for(int i = 0; i < 15; i++){
-            cout << "[ ]";
+        for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
+            if(tabuleiro[j][i] == 'S')
+                cout << "SU ";
+            else if(tabuleiro[j][i] == ' ')
+                cout << "[] ";
+            else
+                cout << tabuleiro[j][i] << " ";
         }
         cout << endl;
     }
-
-    cout << "Tecle <Enter> para fechar a tabela... ";
-    cin.ignore();
-    cin.get();
 }
 
+void playerVsPlayer(){
+
+    char tabuleiro1[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
+    char tabuleiro2[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
+
+    // Inicialização dos tabuleiros
+    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
+        for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
+            tabuleiro1[i][j] = ' ';
+            tabuleiro2[i][j] = ' ';
+        }
+    }
+
+    int submarinos[NUM_SUBMARINOS][2];
+
+    // Jogador 1 submarinos
+    for (int i = 0; i < NUM_SUBMARINOS; i++) {
+        bool posicaoValida = false;
+        while (!posicaoValida) {
+            mostrarTabela(tabuleiro1, "Jogador 1");
+            string coordenada;
+            cout << "Jogador 1, insira as coordenadas do submarino " << i + 1 << " (ex: 1A): ";
+            cin >> coordenada;
+
+            int x = stoi(coordenada.substr(0, coordenada.size() - 1)) - 1;
+            char letra = coordenada.back();
+            letra = toupper(letra);
+            int y = letra - 'A';
+
+            if (tabuleiro1[y][x] == ' ') {
+                submarinos[i][0] = x;
+                submarinos[i][1] = y;
+                tabuleiro1[y][x] = 'S';
+                posicaoValida = true;
+            } else {
+                cout << "Posição inválida! Já existe um submarino nessa posição." << endl;
+                cin.get();
+                cin.get(); 
+            }
+        }
+    }
+
+    // Jogador 2 submarinos
+    for (int i = 0; i < NUM_SUBMARINOS; i++) {
+        bool posicaoValida = false;
+        while (!posicaoValida) {
+            mostrarTabela(tabuleiro2, "Jogador 2");
+            string coordenada;
+            cout << "Jogador 2, insira as coordenadas do submarino " << i + 1 << " (ex: 1A): ";
+            cin >> coordenada;
+
+            int x = stoi(coordenada.substr(0, coordenada.size() - 1)) - 1;
+            char letra = coordenada.back();
+            letra = toupper(letra);  
+            int y = letra - 'A';
+
+            if (tabuleiro2[y][x] == ' ') {
+                submarinos[i][0] = x;
+                submarinos[i][1] = y;
+                tabuleiro2[y][x] = 'S';
+                posicaoValida = true;
+            } else {
+                cout << "Posição inválida! Já existe um submarino nessa posição." << endl;
+                cin.get();
+                cin.get(); 
+            }
+        }
+    }
+
+    mostrarTabela(tabuleiro1, "Jogador 1");
+    mostrarTabela(tabuleiro2, "Jogador 2");
+
+    cout << "Pressione Enter para continuar...";
+    cin.get();
+    cin.get();
 
 
-void batalhaNaval()
-{
-    cout << "Batalha Naval\n";
+}
+void batalhaNaval() {
+        cout << "Batalha Naval\n";
     int op = 0;
-
-    int matriz_escolha_jogador[15][15];
-
-    while (op != 4)
-    {
+        while (op != 4) {
         system("cls");
 
         cout << "Qual modo deseja jogar? \n\
@@ -51,48 +126,33 @@ void batalhaNaval()
 4 - Sair.\n";
         cin >> op;
 
-
-    switch (op)
-    {
-        case 1:
-            cout << "Player vs Player\n";
-            showTable();
-            for(int i = 0; i <= 14; i++)
-            {
-                cout<<"\n";
-
-                for(int j = 0; j <= 14; j++)
-                {
-                    cout << matriz_escolha_jogador[i][j];
-                }
-            }
-            break;
-        case 2:
-            cout << "Player vs CPU\n";
-            showTable();
-            break;
-        case 3:
-            cout << "CPU vs CPU\n";
-            showTable();
-            break;
-        case 4:
-            cout << "Saindo...";
-            break;
-        default:
-            cout << "Opção Invalida.\n";
-            break;
-    }
+        switch (op) {
+            case 1:
+                cout << "Player vs Player\n";
+                playerVsPlayer();
+                break;
+            case 2:
+                cout << "Player vs CPU\n";
+                break;
+            case 3:
+                cout << "CPU vs CPU\n";
+                break;
+            case 4:
+                cout << "Saindo...";
+                break;
+            default:
+                cout << "Opção Inválida.\n";
+                break;
+        }
     }
 }
 
-void matrizesVetores()
-{
 
+void matrizesVetores() {
     cout << "Matrizes e Vetores\n";
     int op = 0;
 
-    while (op != 5)
-    {
+    while (op != 5) {
         system("cls");
 
         cout << "Qual modo deseja jogar? \n\
@@ -103,8 +163,7 @@ void matrizesVetores()
 5 - Sair.\n";
         cin >> op;
 
-        switch (op)
-        {
+        switch (op) {
             case 1:
                 cout << "Batalha Naval\n";
                 batalhaNaval();
@@ -128,12 +187,12 @@ void matrizesVetores()
     }
 }
 
-int main(void)
-{
+int main(void) {
+    setlocale(LC_ALL, "pt-BR.UTF-8");
+
     int op = 0;
 
-    while (op != 5)
-    {
+    while (op != 5) {
         system("cls");
 
         cout << "Escolha uma opção: \n\
@@ -145,8 +204,7 @@ int main(void)
 
         cin >> op;
 
-        switch (op)
-        {
+        switch (op) {
             case 1:
                 matrizesVetores();
                 break;
@@ -163,7 +221,7 @@ int main(void)
                 cout << "Saindo...";
                 break;
             default:
-                cout << "Opção Invalida.\n";
+                cout << "Opção Inválida.\n";
                 break;
         }
     }
