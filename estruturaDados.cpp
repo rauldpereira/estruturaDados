@@ -1,229 +1,137 @@
-#include <iostream>
-#include <stdio.h>
-#include <locale.h>
-#include <cctype>
-
-using namespace std;
-
-const int TAMANHO_TABULEIRO = 15;
-const int NUM_SUBMARINOS = 4;
-
-void mostrarTabela(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], string player) {
-    system("cls");
-
-    char letra[16] = "ABCDEFGHIJKLMNO";
-    cout << "Tabuleiro do " << player << ":\n";
-    cout << "  ";
-    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
-        if (i < 9)
-            cout << "0" << i + 1 << " ";
-        else
-            cout << i + 1 << ' ';
-    }
-    cout << endl;
-    for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
-        cout << letra[j] << ' ';
-        for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
-            if(tabuleiro[j][i] == 'S')
-                cout << "SU ";
-            else if(tabuleiro[j][i] == ' ')
-                cout << "[] ";
-            else
-                cout << tabuleiro[j][i] << " ";
-        }
-        cout << endl;
-    }
-}
-
-void playerVsPlayer(){
-
-    char tabuleiro1[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
-    char tabuleiro2[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
-
-    // Inicialização dos tabuleiros
-    for (int i = 0; i < TAMANHO_TABULEIRO; i++) {
-        for (int j = 0; j < TAMANHO_TABULEIRO; j++) {
-            tabuleiro1[i][j] = ' ';
-            tabuleiro2[i][j] = ' ';
-        }
-    }
-
-    int submarinos[NUM_SUBMARINOS][2];
-
-    // Jogador 1 submarinos
-    for (int i = 0; i < NUM_SUBMARINOS; i++) {
+// Função para posicionar uma embarcação
+void posicionarEmbarcacao(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], char tipo, int quantidade, int jogador) {
+    for (int i = 0; i < quantidade; i++) {
         bool posicaoValida = false;
         while (!posicaoValida) {
-            mostrarTabela(tabuleiro1, "Jogador 1");
+            system("cls");
+            mostrarTabela(tabuleiro, "Jogador " + to_string(jogador));
+
             string coordenada;
-            cout << "Jogador 1, insira as coordenadas do submarino " << i + 1 << " (ex: 1A): ";
+            cout << "Jogador " << jogador << " - Insira as coordenadas da "
+                 << (tipo == SUBMARINO ? "submarino" : tipo == CRUZADOR ? "cruzador" : tipo == PORTA_AVIOES ? "porta-aviões" : tipo == ENCOURACADO ? "encouraçado" : tipo == HIDROVIAO ? "hidrovião" : "embarcação")
+                 << " " << i + 1 << " (ex: 1A): ";
             cin >> coordenada;
 
-            int x = stoi(coordenada.substr(0, coordenada.size() - 1)) - 1;
-            char letra = coordenada.back();
+            // Identifica a posição da letra
+            int pos = 0;
+            while (pos < coordenada.length() && isdigit(coordenada[pos])) {
+                pos++;
+            }
+
+            int x = stoi(coordenada.substr(0, pos)) - 1;
+            char letra = coordenada[pos];
             letra = toupper(letra);
             int y = letra - 'A';
 
-            if (tabuleiro1[y][x] == ' ') {
-                submarinos[i][0] = x;
-                submarinos[i][1] = y;
-                tabuleiro1[y][x] = 'S';
-                posicaoValida = true;
+            // Verifica a direção e o sentido se for um cruzador, porta-aviões, encouraçado ou hidrovião
+            char direcao, sentido;
+            if (tipo == CRUZADOR || tipo == PORTA_AVIOES || tipo == ENCOURACADO || tipo == HIDROVIAO) {
+                if (!determinarDirecao(direcao, sentido)) {
+                    cout << "\nDireção ou sentido inválido! Tente novamente.\n";
+                    cout << "Pressione Enter para continuar...";
+                    cin.ignore();
+                    cin.get();
+                    continue;
+                }
+            }
+
+            bool espacoDisponivel = false;
+            int tamanho = (tipo == SUBMARINO) ? 1 : (tipo == CRUZADOR) ? 2 : (tipo == PORTA_AVIOES) ? 5 : (tipo == ENCOURACADO) ? 4 : 3;
+
+            if (x >= 0 && x < TAMANHO_TABULEIRO && y >= 0 && y < TAMANHO_TABULEIRO) {
+                if (tipo == SUBMARINO) {
+                    if (tabuleiro[y][x] == ' ') {
+                        tabuleiro[y][x] = SUBMARINO;
+                        posicaoValida = true;
+                    } else {
+                        cout << "\nPosição inválida! Já existe uma embarcação nessa posição.\n";
+                        cout << "Pressione Enter para continuar...";
+                        cin.ignore();
+                        cin.get();
+                    }
+                } else if (tipo == CRUZADOR || tipo == PORTA_AVIOES || tipo == ENCOURACADO) {
+                    // Código existente para cruzador, porta-aviões e encouraçado
+                } else if (tipo == HIDROVIAO) {
+                    if (direcao == 'V') {
+                        if (sentido == 'B' && x + 1 < TAMANHO_TABULEIRO && y + 2 < TAMANHO_TABULEIRO) {
+                            espacoDisponivel = true;
+                            for (int j = 0; j < tamanho; j++) {
+                                if (tabuleiro[y + j][x + 1 - j] != ' ') {
+                                    espacoDisponivel = false;
+                                    break;
+                                }
+                            }
+                            if (espacoDisponivel) {
+                                for (int j = 0; j < tamanho; j++) {
+                                    tabuleiro[y + j][x + 1 - j] = tipo;
+                                }
+                                posicaoValida = true;
+                            }
+                        } else if (sentido == 'C' && x - 1 >= 0 && y - 2 >= 0) {
+                            espacoDisponivel = true;
+                            for (int j = 0; j < tamanho; j++) {
+                                if (tabuleiro[y - j][x - 1 + j] != ' ') {
+                                    espacoDisponivel = false;
+                                    break;
+                                }
+                            }
+                            if (espacoDisponivel) {
+                                for (int j = 0; j < tamanho; j++) {
+                                    tabuleiro[y - j][x - 1 + j] = tipo;
+                                }
+                                posicaoValida = true;
+                            }
+                        }
+                    } else if (direcao == 'H') {
+                        if (sentido == 'D' && x + 2 < TAMANHO_TABULEIRO && y + 1 < TAMANHO_TABULEIRO) {
+                            espacoDisponivel = true;
+                            for (int j = 0; j < tamanho; j++) {
+                                if (tabuleiro[y + 1 - j][x + j] != ' ') {
+                                    espacoDisponivel = false;
+                                    break;
+                                }
+                            }
+                            if (espacoDisponivel) {
+                                for (int j = 0; j < tamanho; j++) {
+                                    tabuleiro[y + 1 - j][x + j] = tipo;
+                                }
+                                posicaoValida = true;
+                            }
+                        } else if (sentido == 'E' && x - 2 >= 0 && y - 1 >= 0) {
+                            espacoDisponivel = true;
+                            for (int j = 0; j < tamanho; j++) {
+                                if (tabuleiro[y - 1 + j][x - j] != ' ') {
+                                    espacoDisponivel = false;
+                                    break;
+                                }
+                            }
+                            if (espacoDisponivel) {
+                                for (int j = 0; j < tamanho; j++) {
+                                    tabuleiro[y - 1 + j][x - j] = tipo;
+                                }
+                                posicaoValida = true;
+                            }
+                        }
+                    } else {
+                        cout << "\nSentido inválido! Tente novamente.\n";
+                        cout << "Pressione Enter para continuar...";
+                        cin.ignore();
+                        cin.get();
+                    }
+                }
             } else {
-                cout << "Posição inválida! Já existe um submarino nessa posição." << endl;
+                cout << "\nCoordenada fora do intervalo! Insira novamente.\n";
+                cout << "Pressione Enter para continuar...";
+                cin.ignore();
                 cin.get();
-                cin.get(); 
+            }
+
+            if (!posicaoValida) {
+                cout << "\nPosição inválida para a embarcação! Tente novamente.\n";
+                cout << "Pressione Enter para continuar...";
+                cin.ignore();
+                cin.get();
             }
         }
     }
-
-    // Jogador 2 submarinos
-    for (int i = 0; i < NUM_SUBMARINOS; i++) {
-        bool posicaoValida = false;
-        while (!posicaoValida) {
-            mostrarTabela(tabuleiro2, "Jogador 2");
-            string coordenada;
-            cout << "Jogador 2, insira as coordenadas do submarino " << i + 1 << " (ex: 1A): ";
-            cin >> coordenada;
-
-            int x = stoi(coordenada.substr(0, coordenada.size() - 1)) - 1;
-            char letra = coordenada.back();
-            letra = toupper(letra);  
-            int y = letra - 'A';
-
-            if (tabuleiro2[y][x] == ' ') {
-                submarinos[i][0] = x;
-                submarinos[i][1] = y;
-                tabuleiro2[y][x] = 'S';
-                posicaoValida = true;
-            } else {
-                cout << "Posição inválida! Já existe um submarino nessa posição." << endl;
-                cin.get();
-                cin.get(); 
-            }
-        }
-    }
-
-    mostrarTabela(tabuleiro1, "Jogador 1");
-    mostrarTabela(tabuleiro2, "Jogador 2");
-
-    cout << "Pressione Enter para continuar...";
-    cin.get();
-    cin.get();
-
-
-}
-void batalhaNaval() {
-        cout << "Batalha Naval\n";
-    int op = 0;
-        while (op != 4) {
-        system("cls");
-
-        cout << "Qual modo deseja jogar? \n\
-1 - Player vs Player\n\
-2 - Player vs CPU \n\
-3 - CPU vs CPU\n\
-4 - Sair.\n";
-        cin >> op;
-
-        switch (op) {
-            case 1:
-                cout << "Player vs Player\n";
-                playerVsPlayer();
-                break;
-            case 2:
-                cout << "Player vs CPU\n";
-                break;
-            case 3:
-                cout << "CPU vs CPU\n";
-                break;
-            case 4:
-                cout << "Saindo...";
-                break;
-            default:
-                cout << "Opção Inválida.\n";
-                break;
-        }
-    }
-}
-
-
-void matrizesVetores() {
-    cout << "Matrizes e Vetores\n";
-    int op = 0;
-
-    while (op != 5) {
-        system("cls");
-
-        cout << "Qual modo deseja jogar? \n\
-1 - Batalha Naval\n\
-2 - P2 \n\
-3 - P3\n\
-4 - P4 \n\
-5 - Sair.\n";
-        cin >> op;
-
-        switch (op) {
-            case 1:
-                cout << "Batalha Naval\n";
-                batalhaNaval();
-                break;
-            case 2:
-                cout << "P2\n";
-                break;
-            case 3:
-                cout << "P3\n";
-                break;
-            case 4:
-                cout << "P4\n";
-                break;
-            case 5:
-                cout << "Saindo...\n";
-                break;
-            default:
-                cout << "Opção Inválida.\n";
-                break;
-        }
-    }
-}
-
-int main(void) {
-    setlocale(LC_ALL, "pt-BR.UTF-8");
-
-    int op = 0;
-
-    while (op != 5) {
-        system("cls");
-
-        cout << "Escolha uma opção: \n\
-1 - P1 - Matrizes/vetores\n\
-2 - P2 \n\
-3 - P3 \n\
-4 - P4 \n\
-5 - Sair\n";
-
-        cin >> op;
-
-        switch (op) {
-            case 1:
-                matrizesVetores();
-                break;
-            case 2:
-                cout << "oi\n";
-                break;
-            case 3:
-                cout << "oi\n";
-                break;
-            case 4:
-                cout << "oi\n";
-                break;
-            case 5:
-                cout << "Saindo...";
-                break;
-            default:
-                cout << "Opção Inválida.\n";
-                break;
-        }
-    }
-    return 0;
 }
