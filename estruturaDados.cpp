@@ -247,58 +247,50 @@ void posicionarEmbarcacao(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], 
                 }
                 else if (tipo == HIDROVIAO)
                 {
-                    if (direcao == 'V')
+                    if (direcao == 'H')
                     {
-                        if (y > 1 && y < TAMANHO_TABULEIRO - 2 && x > 0 && x < TAMANHO_TABULEIRO - 1)
+                        if (sentido == 'D' && x + 1 < TAMANHO_TABULEIRO && y + 1 < TAMANHO_TABULEIRO && y - 1 >= 0)
                         {
-                            if (tabuleiro[y - 1][x - 1] == ' ' && tabuleiro[y][x] == ' ' && tabuleiro[y + 1][x + 1] == ' ')
+                            if (tabuleiro[y][x] == ' ' && tabuleiro[y - 1][x + 1] == ' ' && tabuleiro[y + 1][x + 1] == ' ')
                             {
-                                tabuleiro[y - 1][x - 1] = HIDROVIAO;
-                                tabuleiro[y][x] = HIDROVIAO;
-                                tabuleiro[y - 1][x + 1] = HIDROVIAO;
+                                tabuleiro[y][x] = tipo;
+                                tabuleiro[y - 1][x + 1] = tipo;
+                                tabuleiro[y + 1][x + 1] = tipo;
                                 posicaoValida = true;
                             }
-                            else
-                            {
-                                cout << "\nPosição inválida! Já existe uma embarcação nessa posição.\n";
-                                cout << "Pressione Enter para continuar...";
-                                cin.ignore();
-                                cin.get();
-                            }
                         }
-                        else
+                        else if (sentido == 'E' && x - 1 >= 0 && y + 1 < TAMANHO_TABULEIRO && y - 1 >= 0)
                         {
-                            cout << "\nPosição inválida! O hidrovião não pode ser colocado na borda do tabuleiro.\n";
-                            cout << "Pressione Enter para continuar...";
-                            cin.ignore();
-                            cin.get();
+                            if (tabuleiro[y][x] == ' ' && tabuleiro[y - 1][x - 1] == ' ' && tabuleiro[y + 1][x - 1] == ' ')
+                            {
+                                tabuleiro[y][x] = tipo;
+                                tabuleiro[y - 1][x - 1] = tipo;
+                                tabuleiro[y + 1][x - 1] = tipo;
+                                posicaoValida = true;
+                            }
                         }
                     }
-                    else if (direcao == 'H')
+                    else if (direcao == 'V')
                     {
-                        if (y > 0 && y < TAMANHO_TABULEIRO - 1 && x > 1 && x < TAMANHO_TABULEIRO - 2)
+                        if (sentido == 'B' && y + 1 < TAMANHO_TABULEIRO && x + 1 < TAMANHO_TABULEIRO && x - 1 >= 0)
                         {
-                            if (tabuleiro[y - 1][x + 1] == ' ' && tabuleiro[y][x] == ' ' && tabuleiro[y + 1][x - 1] == ' ')
+                            if (tabuleiro[y][x] == ' ' && tabuleiro[y + 1][x - 1] == ' ' && tabuleiro[y + 1][x + 1] == ' ')
                             {
-                                tabuleiro[y - 1][x + 1] = HIDROVIAO;
-                                tabuleiro[y][x] = HIDROVIAO;
-                                tabuleiro[y + 1][x - 1] = HIDROVIAO;
+                                tabuleiro[y][x] = tipo;
+                                tabuleiro[y + 1][x - 1] = tipo;
+                                tabuleiro[y + 1][x + 1] = tipo;
                                 posicaoValida = true;
                             }
-                            else
-                            {
-                                cout << "\nPosição inválida! Já existe uma embarcação nessa posição.\n";
-                                cout << "Pressione Enter para continuar...";
-                                cin.ignore();
-                                cin.get();
-                            }
                         }
-                        else
+                        else if (sentido == 'C' && y - 1 >= 0 && x + 1 < TAMANHO_TABULEIRO && x - 1 >= 0)
                         {
-                            cout << "\nPosição inválida! O hidrovião não pode ser colocado na borda do tabuleiro.\n";
-                            cout << "Pressione Enter para continuar...";
-                            cin.ignore();
-                            cin.get();
+                            if (tabuleiro[y][x] == ' ' && tabuleiro[y - 1][x - 1] == ' ' && tabuleiro[y - 1][x + 1] == ' ')
+                            {
+                                tabuleiro[y][x] = tipo;
+                                tabuleiro[y - 1][x - 1] = tipo;
+                                tabuleiro[y - 1][x + 1] = tipo;
+                                posicaoValida = true;
+                            }
                         }
                     }
                 }
