@@ -17,7 +17,6 @@ const char PORTA_AVIOES = 'P';
 const char ENCOURACADO = 'E';
 const char HIDROVIAO = 'H';
 
-// Função para mostrar a tabela
 void mostrarTabela(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], string player)
 {
     cout << "Tabuleiro do " << player << ":\n";
@@ -55,7 +54,6 @@ void mostrarTabela(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], string 
     }
 }
 
-// Função para determinar a direção da embarcação
 bool determinarDirecao(char& direcao, char& sentido, char tipo)
 {
     cout << "Escolha a direção da embarcação:\n";
@@ -112,7 +110,6 @@ bool determinarDirecao(char& direcao, char& sentido, char tipo)
     return false;
 }
 
-// Função para posicionar uma embarcação
 void posicionarEmbarcacao(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], char tipo, int quantidade, int jogador)
 {
     for (int i = 0; i < quantidade; i++)
@@ -181,7 +178,6 @@ void posicionarEmbarcacao(char tabuleiro[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO], 
                 continue;
             }
 
-            // Verifica a direção e o sentido se for um cruzador, porta-aviões ou encouraçado
             char direcao, sentido;
             if (tipo == CRUZADOR || tipo == PORTA_AVIOES || tipo == ENCOURACADO || tipo == HIDROVIAO)
             {
@@ -389,7 +385,7 @@ void playerVsPlayer()
     char tabuleiro1[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
     char tabuleiro2[TAMANHO_TABULEIRO][TAMANHO_TABULEIRO];
 
-    // Inicializa os tabuleiros com espaços vazios
+    // Inicializando os tabuleiros com espaços vazios
     for (int i = 0; i < TAMANHO_TABULEIRO; i++)
     {
         for (int j = 0; j < TAMANHO_TABULEIRO; j++)
@@ -402,7 +398,7 @@ void playerVsPlayer()
     cout << "Jogo Batalha Naval - Jogador 1\n";
     cout << "Coloque suas embarcações:\n";
 
-    // Posiciona os submarinos, cruzadores, porta-aviões e hidroviões para o Jogador 1
+    // Posicionando os submarinos, cruzadores, porta-aviões e hidroviões para o Jogador 1
     posicionarEmbarcacao(tabuleiro1, SUBMARINO, NUM_SUBMARINOS, 1);
     posicionarEmbarcacao(tabuleiro1, CRUZADOR, NUM_CRUZADORES, 1);
     posicionarEmbarcacao(tabuleiro1, ENCOURACADO, NUM_ENCOURACADOS, 1);
@@ -419,7 +415,7 @@ void playerVsPlayer()
     cout << "Jogo Batalha Naval - Jogador 2\n";
     cout << "Coloque suas embarcações:\n";
 
-    // Posiciona os submarinos, cruzadores, porta-aviões e hidroviões para o Jogador 2
+    // Posicionando os submarinos, cruzadores, porta-aviões e hidroviões para o Jogador 2
     posicionarEmbarcacao(tabuleiro2, SUBMARINO, NUM_SUBMARINOS, 2);
     posicionarEmbarcacao(tabuleiro2, CRUZADOR, NUM_CRUZADORES, 2);
     posicionarEmbarcacao(tabuleiro2, ENCOURACADO, NUM_ENCOURACADOS, 2);
